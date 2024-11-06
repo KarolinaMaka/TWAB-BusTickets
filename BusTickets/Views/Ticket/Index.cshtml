@@ -1,0 +1,37 @@
+﻿@model IEnumerable<BusTickets.Data.Ticket>
+
+@{
+    ViewData["Title"] = "Bilety";
+}
+
+<h1>Bilety</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Typ Biletu</th>
+            <th>Data Zakupu</th>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Email</th>
+            <th>Zweryfikowany</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in Model)
+        {
+            <tr>
+                <td>@ticket.TicketId</td>
+                <td>@ticket.TicketType</td>
+                <td>@ticket.PurchaseDate</td>
+                <td>@ticket.BuyerName</td>
+                <td>@ticket.BuyerLastName</td>
+                <td>@ticket.BuyerEmail</td>
+                <td>@ticket.IsValidated</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" href="@Url.Action("Create")">Kup bilet</a>

@@ -1,17 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-
 namespace BusTickets.Data
 {
     public class TicketDbContext : DbContext
     {
+        public TicketDbContext(DbContextOptions<TicketDbContext> options)
+            : base(options)
+        {
+        }
+
         public DbSet<Ticket> TicketSet { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=KAROLINA-LAPTOP;Database=TicketDatabase;Trusted_Connection=True;TrustServerCertificate=True;");
-
-            // Update this with your actual connection string
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=DESKTOP-SN9QJSB;Database=TicketDatabase;Trusted_Connection=True;TrustServerCertificate=True;");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,6 +25,5 @@ namespace BusTickets.Data
             modelBuilder.Entity<Ticket>().Property(t => t.BuyerName).HasMaxLength(15);
             modelBuilder.Entity<Ticket>().Property(t => t.BuyerLastName).HasMaxLength(25);
         }
-
     }
 }
