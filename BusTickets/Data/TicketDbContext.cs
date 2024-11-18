@@ -15,7 +15,7 @@ namespace BusTickets.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-SN9QJSB;Database=TicketDatabase;Trusted_Connection=True;TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-5OBBIUS;Database=TicketDatabase;Trusted_Connection=True;TrustServerCertificate=True;");
             }
         }
 

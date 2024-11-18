@@ -36,5 +36,29 @@ namespace BusTickets.Controllers
             }
             return View(ticket);
         }
+
+        [HttpPost]
+        public IActionResult DeactivateTicket(int id)
+        {
+            try
+            {
+                var ticket = _context.TicketSet.FirstOrDefault(t => t.TicketId == id);
+                if (ticket != null)
+                {
+                    _context.TicketSet.Remove(ticket);
+                    _context.SaveChanges();
+                    Console.WriteLine($"Bilet o ID {id} został usunięty."); // Log w konsoli
+                    return Ok(); // Kod HTTP 200
+                }
+                Console.WriteLine($"Bilet o ID {id} nie został znaleziony.");
+                return NotFound(); // Kod HTTP 404
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Błąd podczas usuwania biletu: {ex.Message}");
+                return StatusCode(500, "Wystąpił błąd serwera."); // Kod HTTP 500
+            }
+        }
+
     }
 }

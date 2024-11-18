@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Bilety";
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <h1>Bilety</h1>
 
@@ -16,12 +17,13 @@
             <th>Nazwisko</th>
             <th>Email</th>
             <th>Zweryfikowany</th>
+            <th>Aktywacja</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var ticket in Model)
         {
-            <tr>
+            <tr id="ticket-@ticket.TicketId">
                 <td>@ticket.TicketId</td>
                 <td>@ticket.TicketType</td>
                 <td>@ticket.PurchaseDate</td>
@@ -29,9 +31,70 @@
                 <td>@ticket.BuyerLastName</td>
                 <td>@ticket.BuyerEmail</td>
                 <td>@ticket.IsValidated</td>
+                <td>
+                    @if (!ticket.IsValidated)
+                    {
+                        <button class="btn btn-success activate-ticket" data-id="@ticket.TicketId">Aktywuj</button>
+                        <div id="timer-@ticket.TicketId" style="display:none;">
+                            <span>Bilet aktywny! Czas: <span id="time-@ticket.TicketId">9</span> s</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>Bilet już aktywowany</span>
+                    }
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
 <a class="btn btn-primary" href="@Url.Action("Create")">Kup bilet</a>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".activate-ticket").click(function () {
+                var ticketId = $(this).data("id");
+                console.log("Aktywacja biletu o ID:", ticketId);
+
+                if (!ticketId) {
+                    alert("Nie można odnaleźć ID biletu!");
+                    return;
+                }
+
+                var timerElement = $("#timer-" + ticketId);
+                var timeElement = $("#time-" + ticketId);
+
+                timerElement.show();
+
+                var timeLeft = 9;
+                var countdown = setInterval(function () {
+                    timeLeft--;
+                    timeElement.text(timeLeft);
+
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+
+                        $.ajax({
+                            url: '@Url.Action("DeactivateTicket", "Ticket")',
+                            type: 'POST',
+                            data: { id: ticketId },
+                            success: function () {
+                                console.log(`Bilet o ID ${ticketId} został usunięty.`);
+                                location.reload();
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(`Błąd: ${xhr.responseText}`);
+                                alert("Nie udało się usunąć biletu.");
+                            }
+                        });
+                    }
+                }, 1000);
+
+                $(this).prop("disabled", true).text("Bilet aktywowany");
+            });
+        });
+    </script>
+}
